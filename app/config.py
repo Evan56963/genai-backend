@@ -13,6 +13,8 @@ class Settings(BaseSettings):
 
     APP_NAME: str = "GenAI"
     llama_model_path: str
+    cors_origins: list[str]
+    trusted_hosts: list[str]
 
 chromasettings = ChromaSettings()
 settings = Settings()
