@@ -16,4 +16,3 @@ class Settings(BaseSettings):
 
 chromasettings = ChromaSettings()
 settings = Settings()
-print("Chroma Settings:", chromasettings)
