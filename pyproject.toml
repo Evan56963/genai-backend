@@ -1,0 +1,11 @@
+[project]
+name = "genai"
+version = "0.1.0"
+description = "A personal intelligent retrieval system combining legal knowledge base and generative AI"
+readme = "README.md"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "chromadb>=1.4.0",
+    "fastapi[standard]>=0.128.0",
+    "transformers>=4.57.3",
+]
