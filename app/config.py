@@ -7,10 +7,13 @@ class ChromaSettings(Settings):
         env_file = ".env"
         extra = "ignore"
         env_file_encoding = "utf-8"
-
+        
+    is_persistent: bool
     persist_directory: str = "./chroma_db"
     anonymized_telemetry: bool = False
     allow_reset: bool = False
+    chroma_api_impl: str
+    
 
 class ProjectSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
