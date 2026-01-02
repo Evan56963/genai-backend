@@ -1,14 +1,18 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-# from chromadb.config import Settings
+from chromadb.config import Settings
 
-class ChromaSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+class ChromaSettings(Settings):
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+        env_file_encoding = "utf-8"
 
     persist_directory: str = "./chroma_db"
     anonymized_telemetry: bool = False
     allow_reset: bool = False
 
-class Settings(BaseSettings):
+class ProjectSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     APP_NAME: str = "GenAI"
@@ -17,4 +21,4 @@ class Settings(BaseSettings):
     trusted_hosts: list[str]
 
 chromasettings = ChromaSettings()
-settings = Settings()
+settings = ProjectSettings()
