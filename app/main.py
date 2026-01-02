@@ -9,12 +9,10 @@ from app.llama_loader import load_llama_model
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Load llama and save to app state
     app.state.llama = load_llama_model(settings.llama_model_path)
 
     yield
 
-    # Cleanup if necessary
     del app.state.llama
 
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
