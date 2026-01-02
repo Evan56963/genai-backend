@@ -10,12 +10,13 @@ from app.llama_loader import load_llama_model
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.llama = load_llama_model(settings.llama_model_path)
+    app.state.model, app.state.tokenizer = load_llama_model(settings.llama_model_path)
 
     yield
 
-    del app.state.llama
-
+    del app.state.model
+    del app.state.tokenizer
+    
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
 
 app.add_middleware(
