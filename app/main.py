@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.concurrency import run_in_threadpool
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
@@ -10,8 +11,8 @@ from app.initial_data import load_llama_model, initialize_chromadb_client
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.model, app.state.tokenizer = load_llama_model(settings.llama_model_path)
-    app.state.embed_model, app.state.collection = initialize_chromadb_client(
+    app.state.model, app.state.tokenizer = await run_in_threadpool(load_llama_model, settings.llama_model_path)
+    app.state.embed_model, app.state.collection = await run_in_threadpool(initialize_chromadb_client,
         
         settings.embed_model_name,
         chromasettings.persist_directory,
