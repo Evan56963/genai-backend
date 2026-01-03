@@ -12,8 +12,6 @@ class ChromaSettings(Settings):
     persist_directory: str = "./chroma_db"
     anonymized_telemetry: bool = False
     allow_reset: bool = False
-    chroma_api_impl: str
-    
 
 class ProjectSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -22,6 +20,8 @@ class ProjectSettings(BaseSettings):
     llama_model_path: str
     cors_origins: list[str]
     trusted_hosts: list[str]
+    embed_model_name: str
+    embed_model_collection: str
 
 chromasettings = ChromaSettings()
 settings = ProjectSettings()
