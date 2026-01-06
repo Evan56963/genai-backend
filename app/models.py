@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 
 class SearchResult(BaseModel):
     file: Optional[str]
@@ -16,4 +16,16 @@ class SearchResult(BaseModel):
     content: str
 
 class SearchResponse(BaseModel):
-    results: List[SearchResult]
+    results: list[SearchResult]
+
+class LLMRagResponse(BaseModel):
+    answer: str
+    file: Optional[str] = None
+    part: Optional[str] = None
+    chapter: Optional[str] = None
+    section: Optional[str] = None
+    article: Optional[str] = None
+    start_page: Optional[int] = None
+
+class LLMChatResponse(BaseModel):
+    response: str

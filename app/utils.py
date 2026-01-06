@@ -1,4 +1,90 @@
+import re
+
 from app.models import SearchResult
+
+def format_context(data: list[SearchResult], max_chars_per_doc: int = 1200) -> str:
+    """
+    Format search results into structured context for model consumption
+    
+    Args:
+        data: List of SearchResult objects from ChromaDB
+        max_chars_per_doc: Maximum characters per document (default: 1200)
+        
+    Returns:
+        Formatted context string with source metadata and content
+    """
+    if not data:
+        return "(未找到相關法條或段落)"
+    
+    formatted_parts = []
+    for i, result in enumerate(data, start=1):
+        # Build source line: 【來源 N】 filename (pages X - Y)  標題: header
+        source_parts = []
+        
+        # File name
+        if result.file:
+            source_parts.append(result.file)
+        else:
+            source_parts.append("unknown")
+        
+        # Pages
+        if result.start_page:
+            page_info = f"(pages {result.start_page} - {result.end_page if result.end_page else result.start_page})"
+            source_parts.append(page_info)
+        
+        # Header/Title
+        if result.header:
+            source_parts.append(f"標題: {result.header}")
+        else:
+            source_parts.append("標題: (無標題)")
+        
+        # Combine source line
+        source_line = f"【來源 {i}】 {' '.join(source_parts)}"
+        
+        # Truncate content if needed
+        content = result.content.strip()
+        if len(content) > max_chars_per_doc:
+            content = content[:max_chars_per_doc] + "..."
+        
+        # Format entry: source line + newline + content
+        formatted_entry = f"{source_line}\n{content}"
+        formatted_parts.append(formatted_entry)
+    
+    return "\n\n---\n\n".join(formatted_parts)
+
+
+def format_answer(answer: str) -> str:
+    if not answer:
+        return ""
+    
+    # Remove assistant marker and everything before it
+    if match := re.search(r'\bassistant\b', answer, re.IGNORECASE):
+        answer = answer[match.end():].lstrip()
+    
+    # Remove prefix and everything before it (handles both : and ：)
+    prefix_pattern = r'(?:悟空|孫悟空|猴子|齊天大聖|孫|wuluo)\s*[:：]\s*'
+    if match := re.search(prefix_pattern, answer, re.IGNORECASE):
+        answer = answer[match.end():].lstrip()
+    
+    # Remove code patterns and everything after them (like ://wuluo:)
+    if match := re.search(r'[:：]{1,2}[/\\/]{2,}', answer):
+        answer = answer[:match.start()]
+    
+    # Filter valid characters to remove garbled text
+    answer = re.sub(
+        r'[^\u4e00-\u9fff\u3000-\u303fa-zA-Z0-9\s.,!?;:：；，。！？、（）()\[\]「」『』""\'\'…—\-\\/]', '', answer)
+    
+    # Normalize whitespace
+    answer = ' '.join(answer.split())
+    
+    # Keep only complete sentences
+    sentence_endings = '。！？.!?'
+    last_end = max((i for i, c in enumerate(answer) if c in sentence_endings), default=-1)
+    if last_end > 0:
+        answer = answer[:last_end + 1]
+    
+    return answer.strip()
+
 
 def format_chromadb_results(docs, metas, dists) -> list[SearchResult]:
     results = []
@@ -20,3 +106,40 @@ def format_chromadb_results(docs, metas, dists) -> list[SearchResult]:
             )
         )
     return results
+
+# for i, (doc, meta, dist) in enumerate(zip(docs, metas, dists), start=1):
+#     print(f"Result {i}")
+#     print("-" * 50)
+#     print(f"File          : {meta.get('file')}")
+#     print(f"Page          : {meta.get('start_page')} - {meta.get('end_page')}")
+#     print(f"Header        : {meta.get('header')}")
+#     print(f"Header Type   : {meta.get('header_type')}")
+#     print(f"Part          : {meta.get('part')}")
+#     print(f"Chapter       : {meta.get('chapter')}")
+#     print(f"Section       : {meta.get('section')}")
+#     print(f"Subchunk Index: {meta.get('subchunk_index')}")
+#     print(f"Article Index : {meta.get('article_index')}")
+#     print(f"Similarity    : {dist:.4f}")
+#     print("Content:")
+#     print(doc.strip())
+#     print("=" * 50 + "\n")
+
+def get_data(embed_model, collection, user_input: str):
+
+    query_embedding = embed_model.encode(
+        [user_input], 
+        convert_to_numpy=True, 
+        show_progress_bar=False, 
+        normalize_embeddings=True)[0]
+    
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=5,
+        include=['documents', 'metadatas', 'distances']
+)
+    
+    docs = results.get('documents', [[]])[0]
+    metas = results.get('metadatas', [[]])[0]
+    dists = results.get('distances', [[]])[0]
+
+    return docs, metas, dists
