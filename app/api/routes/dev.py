@@ -1,3 +1,4 @@
+# These endpoints are for development and testing purposes only.
 from fastapi import APIRouter, Request
 
 from app.models import LLMChatResponse, SearchResponse

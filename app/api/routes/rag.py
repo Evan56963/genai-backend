@@ -1,7 +1,7 @@
 import textwrap
 
-from fastapi import APIRouter, Request
 import torch
+from fastapi import APIRouter, Request
 
 from app.models import LLMRagResponse
 from app.utils import format_chromadb_results, format_answer, get_data, format_context

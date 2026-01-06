@@ -1,7 +1,8 @@
+import torch
 from unsloth import FastLanguageModel
 from sentence_transformers import SentenceTransformer
 from chromadb import PersistentClient
-import torch
+
 
 def load_llama_model(llama_model_path: str):
     model, tokenizer = FastLanguageModel.from_pretrained(
