@@ -22,7 +22,6 @@ def initialize_chromadb_client(embed_model_name: str, persist_directory: str, em
     return embed_model, collection
 
 def initialize_db(sqlite_filepath: str) -> Session:
-    sqlite_filepath = sqlite_filepath
     sqlite_url = f"sqlite:///{sqlite_filepath}"
     engine = create_engine(sqlite_url, echo=False)
     SQLModel.metadata.create_all(engine)
