@@ -1,15 +1,15 @@
-# 啟動方式
+# Startup
 
 ```powershell
 cd genai-backend
 uvicorn app.main:app
 ```
 
-## 後端框架
+## Backend Framework
 
 - FastAPI
 
-## 主要第三方庫
+## Main Dependencies
 
 - **uvicorn** - ASGI Server
 - **chromadb**
@@ -22,6 +22,6 @@ uvicorn app.main:app
 - **unsloth**
 - **sqlmodel** - ORM library
 
-## 技術棧
+## Tech Stack
 
 - ORM (Object-Relational Mapping)
