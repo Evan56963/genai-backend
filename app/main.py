@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
     del app.state.tokenizer
     del app.state.embed_model
     del app.state.collection
+    del app.state.session
     
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
 
