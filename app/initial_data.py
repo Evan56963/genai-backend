@@ -2,7 +2,7 @@ import torch
 from unsloth import FastLanguageModel
 from sentence_transformers import SentenceTransformer
 from chromadb import PersistentClient
-
+from sqlmodel import SQLModel, create_engine, Session
 
 def load_llama_model(llama_model_path: str):
     model, tokenizer = FastLanguageModel.from_pretrained(
@@ -20,3 +20,11 @@ def initialize_chromadb_client(embed_model_name: str, persist_directory: str, em
     client = PersistentClient(path=persist_directory)
     collection = client.get_collection(name=embed_model_collection)
     return embed_model, collection
+
+def initialize_db(sqlite_filepath: str) -> Session:
+    sqlite_filepath = sqlite_filepath
+    sqlite_url = f"sqlite:///{sqlite_filepath}"
+    engine = create_engine(sqlite_url, echo=False)
+    SQLModel.metadata.create_all(engine)
+    session = Session(engine)
+    return session

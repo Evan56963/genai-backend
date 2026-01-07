@@ -1,5 +1,10 @@
+from typing import Optional
+from datetime import datetime
+from enum import StrEnum
+
 from pydantic import BaseModel
 from typing import Optional
+from sqlmodel import SQLModel, Field
 
 class SearchResult(BaseModel):
     file: Optional[str]
@@ -29,3 +34,14 @@ class LLMRagResponse(BaseModel):
 
 class LLMChatResponse(BaseModel):
     response: str
+
+class MessageRole(StrEnum):
+    USER = "user"
+    ASSISTANT = "assistant"
+
+class Message(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    conversation_id: str
+    role: MessageRole
+    content: str
+    created_at: datetime = datetime.now()

@@ -7,7 +7,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api.register import api_router
 from app.config import settings, chromasettings
-from app.initial_data import load_llama_model, initialize_chromadb_client
+from app.initial_data import load_llama_model, initialize_chromadb_client, initialize_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,6 +19,8 @@ async def lifespan(app: FastAPI):
         settings.embed_model_collection
 
     )
+
+    app.state.session = initialize_db(settings.sqlite_filepath)
 
     yield
 

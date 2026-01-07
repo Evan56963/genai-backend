@@ -6,7 +6,7 @@ from app.utils import format_chromadb_results, get_data
 
 router = APIRouter(prefix="/dev", tags=["Dev"])
 
-@router.post("/send", response_model=LLMChatResponse)
+@router.post("/chat", response_model=LLMChatResponse)
 async def send_message_to_llm(message: str, request: Request):
 
     state = request.app.state

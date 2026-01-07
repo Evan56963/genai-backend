@@ -1,6 +1,8 @@
 import re
+import uuid
+from typing import Literal
 
-from app.models import SearchResult
+from app.models import SearchResult, Message
 
 def format_context(data: list[SearchResult], max_chars_per_doc: int = 1200) -> str:
     """
@@ -107,23 +109,6 @@ def format_chromadb_results(docs, metas, dists) -> list[SearchResult]:
         )
     return results
 
-# for i, (doc, meta, dist) in enumerate(zip(docs, metas, dists), start=1):
-#     print(f"Result {i}")
-#     print("-" * 50)
-#     print(f"File          : {meta.get('file')}")
-#     print(f"Page          : {meta.get('start_page')} - {meta.get('end_page')}")
-#     print(f"Header        : {meta.get('header')}")
-#     print(f"Header Type   : {meta.get('header_type')}")
-#     print(f"Part          : {meta.get('part')}")
-#     print(f"Chapter       : {meta.get('chapter')}")
-#     print(f"Section       : {meta.get('section')}")
-#     print(f"Subchunk Index: {meta.get('subchunk_index')}")
-#     print(f"Article Index : {meta.get('article_index')}")
-#     print(f"Similarity    : {dist:.4f}")
-#     print("Content:")
-#     print(doc.strip())
-#     print("=" * 50 + "\n")
-
 def get_data(embed_model, collection, user_input: str):
 
     query_embedding = embed_model.encode(
@@ -143,3 +128,40 @@ def get_data(embed_model, collection, user_input: str):
     dists = results.get('distances', [[]])[0]
 
     return docs, metas, dists
+
+# for i, (doc, meta, dist) in enumerate(zip(docs, metas, dists), start=1):
+#     print(f"Result {i}")
+#     print("-" * 50)
+#     print(f"File          : {meta.get('file')}")
+#     print(f"Page          : {meta.get('start_page')} - {meta.get('end_page')}")
+#     print(f"Header        : {meta.get('header')}")
+#     print(f"Header Type   : {meta.get('header_type')}")
+#     print(f"Part          : {meta.get('part')}")
+#     print(f"Chapter       : {meta.get('chapter')}")
+#     print(f"Section       : {meta.get('section')}")
+#     print(f"Subchunk Index: {meta.get('subchunk_index')}")
+#     print(f"Article Index : {meta.get('article_index')}")
+#     print(f"Similarity    : {dist:.4f}")
+#     print("Content:")
+#     print(doc.strip())
+#     print("=" * 50 + "\n")
+
+def save(db_session, role: list[Literal["user", "assistant"]], content: list[str]) -> None:
+
+    conversation_id = str(uuid.uuid4())
+
+    message1 = Message(
+        conversation_id=conversation_id,
+        role=role[0],
+        content=content[0]
+    )
+
+    message2 = Message(
+        conversation_id=conversation_id,
+        role=role[1],
+        content=content[1]
+    )
+    with db_session:
+        db_session.add(message1)
+        db_session.add(message2)
+        db_session.commit()

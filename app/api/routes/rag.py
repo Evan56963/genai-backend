@@ -4,11 +4,11 @@ import torch
 from fastapi import APIRouter, Request
 
 from app.models import LLMRagResponse
-from app.utils import format_chromadb_results, format_answer, get_data, format_context
+from app.utils import format_chromadb_results, format_answer, get_data, format_context, save
 
 router = APIRouter(prefix="/rag", tags=["RAG"])
 
-@router.post("/llm/answer", response_model=LLMRagResponse)
+@router.post("/ask", response_model=LLMRagResponse)
 async def answer_throgh_llm(user_input: str, request: Request):
 
     state = request.app.state
@@ -43,6 +43,8 @@ async def answer_throgh_llm(user_input: str, request: Request):
     input_length = inputs.input_ids.shape[1]
     answer = state.tokenizer.decode(outputs[0][input_length:], skip_special_tokens=True).strip()
     
+    save(state.session, role=["user", "assistant"], content=[user_input, answer])
+
     top = data[0] if data else None
     return LLMRagResponse(
         answer=format_answer(answer),

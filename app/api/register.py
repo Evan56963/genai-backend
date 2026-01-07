@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-from app.api.routes import rag, dev
+from app.api.routes import rag, dev, manage
 
 api_router = APIRouter()
 
 api_router.include_router(rag.router)
 api_router.include_router(dev.router)
+api_router.include_router(manage.router)

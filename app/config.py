@@ -22,6 +22,7 @@ class ProjectSettings(BaseSettings):
     trusted_hosts: list[str]
     embed_model_name: str
     embed_model_collection: str
+    sqlite_filepath: str = "conversations.db"
 
 chromasettings = ChromaSettings()
 settings = ProjectSettings()
