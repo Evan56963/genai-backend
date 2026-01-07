@@ -9,7 +9,7 @@ class ChromaSettings(Settings):
         env_file_encoding = "utf-8"
         
     is_persistent: bool
-    persist_directory: str = "./chroma_db"
+    persist_directory: str
     anonymized_telemetry: bool = False
     allow_reset: bool = False
 
