@@ -3,7 +3,6 @@ from datetime import datetime
 from enum import StrEnum
 
 from pydantic import BaseModel
-from typing import Optional
 from sqlmodel import SQLModel, Field
 
 class SearchResult(BaseModel):
