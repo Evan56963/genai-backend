@@ -1,5 +1,8 @@
 # Startup
 
+1. Create a `.env` file based on `.env.example`
+2. Start the server:
+
 ```powershell
 cd genai-backend
 uvicorn app.main:app
