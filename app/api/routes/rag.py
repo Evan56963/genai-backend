@@ -14,9 +14,9 @@ async def answer_throgh_llm(user_input: str, request: Request):
     state = request.app.state
 
     docs, metas, dists = get_data(state.embed_model, state.collection, user_input)
-    data = format_chromadb_results(docs, metas, dists)
+    preprocess_context = format_chromadb_results(docs, metas, dists)
 
-    context = format_context(data)
+    context = format_context(preprocess_context)
 
     # Prepare the prompt with correct format from training
     # prompt = f"Human: {user_input}\n 悟空:"
@@ -45,7 +45,7 @@ async def answer_throgh_llm(user_input: str, request: Request):
     
     save(state.session, role=["user", "assistant"], content=[user_input, answer])
 
-    top = data[0] if data else None
+    top = preprocess_context[0] if preprocess_context else None
     return LLMRagResponse(
         answer=format_answer(answer),
         file=top.file.replace(".pdf", "") if top else None,
