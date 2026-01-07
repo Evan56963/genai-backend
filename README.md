@@ -20,7 +20,7 @@ uvicorn app.main:app
 - **accelerate**
 - **sentence-transformers**
 - **unsloth**
-- **sqlmodel**
+- **sqlmodel** - ORM library
 
 ## 技術棧
 
