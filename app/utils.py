@@ -5,16 +5,6 @@ from typing import Literal
 from app.models import SearchResult, Message
 
 def format_context(data: list[SearchResult], max_chars_per_doc: int = 1200) -> str:
-    """
-    Format search results into structured context for model consumption
-    
-    Args:
-        data: List of SearchResult objects from ChromaDB
-        max_chars_per_doc: Maximum characters per document (default: 1200)
-        
-    Returns:
-        Formatted context string with source metadata and content
-    """
     if not data:
         return "(未找到相關法條或段落)"
     
@@ -128,23 +118,6 @@ def get_data(embed_model, collection, user_input: str):
     dists = results.get('distances', [[]])[0]
 
     return docs, metas, dists
-
-# for i, (doc, meta, dist) in enumerate(zip(docs, metas, dists), start=1):
-#     print(f"Result {i}")
-#     print("-" * 50)
-#     print(f"File          : {meta.get('file')}")
-#     print(f"Page          : {meta.get('start_page')} - {meta.get('end_page')}")
-#     print(f"Header        : {meta.get('header')}")
-#     print(f"Header Type   : {meta.get('header_type')}")
-#     print(f"Part          : {meta.get('part')}")
-#     print(f"Chapter       : {meta.get('chapter')}")
-#     print(f"Section       : {meta.get('section')}")
-#     print(f"Subchunk Index: {meta.get('subchunk_index')}")
-#     print(f"Article Index : {meta.get('article_index')}")
-#     print(f"Similarity    : {dist:.4f}")
-#     print("Content:")
-#     print(doc.strip())
-#     print("=" * 50 + "\n")
 
 def save(db_session, role: list[Literal["user", "assistant"]], content: list[str]) -> None:
 
